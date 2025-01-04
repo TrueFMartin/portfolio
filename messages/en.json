@@ -1,0 +1,96 @@
+{
+    "person": {
+        "role": "Software Engineer and Backend Application Developer"
+    },
+    "newsletter": {
+        "title": "Subscribe to {firstName}'s Newsletter",
+        "description": "I occasionally write about design, technology, and share thoughts on the intersection of creativity and engineering",
+        "button": "Sign up"
+    },
+    "home": {
+        "label": "Home",
+        "title": "{name}'s Portfolio",
+        "description": "Portfolio website showcasing my work as a {role}",
+        "headline": "Software Engineer and Backend Application Developer",
+        "subline": "I'm {name}, a design engineer at SecureWorks, where I develop backend APIs, messaging data pipelines, and cloud/k8s infrastructure. After hours, I build my own projects and work on my homelab (where this site is hosted)."
+    },
+    "about": {
+        "label": "About",
+        "title": "About me",
+        "description": "Meet {name}, {role} from {location}",
+        "intro": {
+            "title": "Introduction",
+            "description": "{name} is a US-based engineer with a passion for transforming complex challenges into robust and modular services. His work spans cloud infrastructure, container orchestration, backend APIs, and Kafka microservices."
+        },
+        "work": {
+            "title": "Work Experience",
+            "experiences": {
+                "SecureWorks": {
+                    "key": "secureworks",
+                    "timeframe": "2023 - Present",
+                    "role": "Platform Software Engineer",
+                    "achievements": "Specialized in developing web service APIs, high-throughput data pipelines, and software development kits to deliver actionable security insights and drive advancements in cybersecurity."
+                },
+                "WalMart Global Tech": {
+                    "key": "walmart",
+                    "timeframe": "2023",
+                    "role": "Software Engineer II - Intern",
+                    "achievements": "Developed and deployed a back-end server for a payroll API using Java Spring Boot and SQL, improving operational reliability and speed while migrating infrastructure from virtual machines to Kubernetes for enhanced scalability"
+                }
+            }
+        },
+        "studies": {
+            "title": "Studies",
+            "institutions": {
+                "University of Arkansas": {
+                    "key": "uark",
+                    "description": "Studied Computer Science and Computer Engineering with a course focus in Information Retrieval.",
+                    "result": "A Bachelors of Science and graduating with high distinction and 3.9 GPA."
+                }
+            }
+        },
+        "technical": {
+            "title": "Technical skills",
+            "skills": {
+                "Go, Java Spring/Springboot, Python": {
+                    "key": "languages",
+                    "description": "Building fault tolerant and scalable backend web and data services. Experience with RESTful APIs, gRPC, and GraphQL."
+                },
+                "Kubernetes, Docker": {
+                    "key": "infrastructure",
+                    "description": "Container orchestration and microservices deployment using Helm and Helmfile as IaC."
+                },
+                "Apache Kafka, Spark, Flink, StarRocks": {
+                    "key": "data",
+                    "description": "Developing high-throughput ( > millions msg/sec) data pipelines and stream processing applications."
+                },
+                "AWS, GCP": {
+                    "key": "cloud",
+                    "description": "Cloud infrastructure and services, including EC2, S3, RDS, EKS, GKE, and Cloud Functions."
+                },
+                "SQL, NoSQL, Graph Databases": {
+                    "key": "database",
+                    "description": "Database design and management, including MySQL, PostgreSQL, MongoDB, Redis, and Janusgraph."
+                }
+            }
+        }
+    },
+    "blog": {
+        "label": "Blog",
+        "title": "Writing about design and tech...",
+        "description": "Read what {name} has been up to recently"
+    },
+    "work": {
+        "label": "Work",
+        "title": "My projects",
+        "description": "Dev projects by {name}"
+    },
+    "gallery": {
+        "label": "Gallery",
+        "title": "My photo gallery",
+        "description": "A photo collection by {name}"
+    },
+    "projectCard": {
+        "label": "Read Case Study"
+    }
+}

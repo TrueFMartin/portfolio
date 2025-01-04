@@ -1,0 +1,57 @@
+import { NextApiRequest, NextApiResponse } from 'next';
+import * as cookie from 'cookie';
+import {decodeFromBase64} from "next/dist/build/webpack/loaders/utils";
+import jwt from 'jsonwebtoken';
+
+export default function handler(req: NextApiRequest, res: NextApiResponse) {
+    if (req.method === 'POST') {
+        const { password } = req.body;
+        const pass64 = process.env.FAMILY_PASSWORD;
+        if (!pass64) {
+            return res.status(500).json({ message: 'Internal Server Error' });
+        }
+        const correctPassword = decodeFromBase64(pass64);
+
+        if (password === correctPassword) {
+            // Generate a JWT on successful login
+            const token = jwt.sign(
+                { authenticated: true }, // Payload
+                process.env.JWT_SECRET!, // Secret key
+                { expiresIn: '1h' } // Token expiration
+            );
+
+            res.setHeader(
+                'Set-Cookie',
+                cookie.serialize('authToken', token, {
+                    httpOnly: true,
+                    secure: process.env.NODE_ENV === 'production',
+                    maxAge: 60 * 60,
+                    sameSite: 'strict',
+                    path: '/',
+                })
+            );
+
+            return res.status(200).json({ success: true });
+        } else {
+            return res.status(401).json({ message: 'Incorrect password' });
+        }
+    }
+
+    return res.status(405).json({ message: 'Method Not Allowed' });
+}
+
+export function verifyAuth(req: any, res: any, next: any) {
+    const token = req.cookies.authToken;
+
+    if (!token) {
+        return res.status(401).json({ message: 'Unauthorized' });
+    }
+
+    try {
+        const decoded = jwt.verify(token, process.env.JWT_SECRET!); // Verifies the signature
+        // req.user = decoded; // Optional: Attach token info to the request object
+        next();
+    } catch (err) {
+        return res.status(401).json({ message: 'Invalid token' });
+    }
+}
