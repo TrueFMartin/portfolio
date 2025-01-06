@@ -39,19 +39,3 @@ export default function handler(req: NextApiRequest, res: NextApiResponse) {
 
     return res.status(405).json({ message: 'Method Not Allowed' });
 }
-
-export function verifyAuth(req: any, res: any, next: any) {
-    const token = req.cookies.authToken;
-
-    if (!token) {
-        return res.status(401).json({ message: 'Unauthorized' });
-    }
-
-    try {
-        const decoded = jwt.verify(token, process.env.JWT_SECRET!); // Verifies the signature
-        // req.user = decoded; // Optional: Attach token info to the request object
-        next();
-    } catch (err) {
-        return res.status(401).json({ message: 'Invalid token' });
-    }
-}

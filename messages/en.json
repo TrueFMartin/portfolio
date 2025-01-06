@@ -92,5 +92,13 @@
     },
     "projectCard": {
         "label": "Read Case Study"
+    },
+    "needs": {
+        "db": "Need an application that can handle millions of messages per second?",
+        "robust": "Need a robust and scalable backend service?",
+        "cloud": "Need a cloud-native application that can scale with your business?",
+        "microservices": "Need a microservices architecture that can handle complex data processing?",
+        "devops": "Need CICD, telemetry, and monitoring for your application?",
+        "authentication": "Need secure authentication and authorization for your application?"
     }
 }

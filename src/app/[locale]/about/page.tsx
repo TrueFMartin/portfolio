@@ -1,9 +1,10 @@
-import { Avatar, Button, Flex, Heading, Icon, IconButton, SmartImage, Tag, Text } from '@/once-ui/components';
-import { baseURL, renderContent } from '@/app/resources';
+import {Avatar, Button, Flex, Heading, Icon, IconButton, SmartImage, Tag, Text} from '@/once-ui/components';
+import {baseURL, renderContent} from '@/app/resources';
 import TableOfContents from '@/components/about/TableOfContents';
+import RenderNeed from '@/components/about/Needs';
 import styles from '@/components/about/about.module.scss'
-import { getTranslations, unstable_setRequestLocale } from 'next-intl/server';
-import { useTranslations } from 'next-intl';
+import {getTranslations, unstable_setRequestLocale} from 'next-intl/server';
+import {useTranslations} from 'next-intl';
 import "@/app/[locale]/about/about-declared";
 import {
     I18nContent,
@@ -12,43 +13,45 @@ import {
     Work,
     WorkExperience,
     Person,
-    Institution
+    Institution,
+    Needs,
+    Technical
 } from "@/app/[locale]/about/about-declared";
 
 export async function generateMetadata(
-    {params: {locale}}: { params: { locale: string }}
+    {params: {locale}}: { params: { locale: string } }
 ) {
     const t = await getTranslations();
     const res: I18nContent = renderContent(t);
     const person = res.person;
     const about = res.about;
     const social = res.social;
-	const title = about.title;
-	const description = about.description;
-	const ogImage = `https://${baseURL}/og?title=${encodeURIComponent(title)}`;
+    const title = about.title;
+    const description = about.description;
+    const ogImage = `https://${baseURL}/og?title=${encodeURIComponent(title)}`;
 
-	return {
-		title,
-		description,
-		openGraph: {
-			title,
-			description,
-			type: 'website',
-			url: `https://${baseURL}/${locale}/about`,
-			images: [
-				{
-					url: ogImage,
-					alt: title,
-				},
-			],
-		},
-		twitter: {
-			card: 'summary_large_image',
-			title,
-			description,
-			images: [ogImage],
-		},
-	};
+    return {
+        title,
+        description,
+        openGraph: {
+            title,
+            description,
+            type: 'website',
+            url: `https://${baseURL}/${locale}/about`,
+            images: [
+                {
+                    url: ogImage,
+                    alt: title,
+                },
+            ],
+        },
+        twitter: {
+            card: 'summary_large_image',
+            title,
+            description,
+            images: [ogImage],
+        },
+    };
 }
 
 function renderExperiences(experiences: WorkExperience[]) {
@@ -134,9 +137,10 @@ function renderSkills(skills: Skill[]) {
         {skills.map((skill: Skill, index) => (
             !skill.isEmpty &&
             <Flex
-                direction="column" fillWidth >
+                direction="column" fillWidth>
                 <Flex
                     key={`${skill}-${index}`}
+                    id={skill.title}
                     fillWidth gap="4"
                     direction="column">
                     <Text
@@ -177,8 +181,25 @@ function renderImages(images: Image[]) {
     </Flex>;
 }
 
+function RenderNeeds(needs: Needs, technical: Technical) {
+    const getKey = (key: string) => {
+        const want = technical.idToTitle.get(key);
+        return want ? want : technical.title;
+    }
+    return <Flex
+        background={"accent-weak"}
+        border={"accent-strong"}
+        borderStyle={"solid-2"}
+        maxWidth={"160"}
+        fillWidth={true}
+    >
+        {/*TODO in the future, add a Record of need value => skillId somewhere*/}
+        <RenderNeed text={needs.db} skillId={getKey("data")}/>
+    </Flex>;
+}
+
 export default function About(
-    { params: {locale}}: { params: { locale: string }}
+    {params: {locale}}: { params: { locale: string } }
 ) {
     unstable_setRequestLocale(locale);
     const t = useTranslations();
@@ -186,6 +207,7 @@ export default function About(
     const person = res.person;
     const about = res.about;
     const social = res.social;
+    const needs = res.needs;
     const structure = [
         {
             title: about.intro.title,
@@ -234,162 +256,183 @@ export default function About(
                     }),
                 }}
             />
-            { about.tableOfContent.display && (
+            <Flex>
                 <Flex
-                    style={{ left: '0', top: '50%', transform: 'translateY(-50%)' }}
-                    position="fixed"
-                    paddingLeft="24" gap="32"
-                    direction="column" hide="s">
-                    <TableOfContents
-                        structure={structure}
-                        about={about} />
-                </Flex>
-            )}
-            <Flex
-                fillWidth
-                mobileDirection="column" justifyContent="center">
-                { about.displayAvatar && (
-                    <Flex
-                        className={styles.avatar}
-                        minWidth="160" paddingX="l" paddingBottom="xl" gap="m"
-                        flex={3} direction="column" alignItems="center">
-                        <Avatar
-                            src={person.avatar}
-                            size="xl"/>
+                    style={{
+                        left: '0'
+                    }}
+                    position={"fixed"}
+                    direction={"column"}
+                    hide="s"
+                    flex={5}
+                >
+                    {about.tableOfContent.display && (
                         <Flex
-                            gap="8"
-                            alignItems="center">
-                            <Icon
-                                onBackground="accent-weak"
-                                name="globe"/>
-                            {person.locationTz}
-                        </Flex>
-                        { person.languages.length > 0 && (
-                            <Flex
-                                wrap
-                                gap="8">
-                                {person.languages.map((language, index) => (
-                                    <Tag
-                                        key={index}
-                                        size="l">
-                                        {language}
-                                    </Tag>
-                                ))}
-                            </Flex>
-                        )}
-                    </Flex>
-                )}
-                <Flex
-                    className={styles.blockAlign}
-                    fillWidth flex={9} maxWidth={40} direction="column">
-                    <Flex
-                        id={about.intro.title}
-                        fillWidth minHeight="160"
-                        direction="column" justifyContent="center"
-                        marginBottom="32">
-                        {about.calendar.display && (
-                            <Flex
-                                className={styles.blockAlign}
-                                style={{
-                                    backdropFilter: 'blur(var(--static-space-1))',
-                                    border: '1px solid var(--brand-alpha-medium)',
-                                    width: 'fit-content'
-                                }}
-                                alpha="brand-weak" radius="full"
-                                fillWidth padding="4" gap="8" marginBottom="m"
-                                alignItems="center">
-                                <Flex paddingLeft="12">
-                                    <Icon
-                                        name="calendar"
-                                        onBackground="brand-weak"/>
-                                </Flex>
-                                <Flex
-                                    paddingX="8">
-                                    Schedule a call
-                                </Flex>
-                                <IconButton
-                                    href={about.calendar.link}
-                                    data-border="rounded"
-                                    variant="tertiary"
-                                    icon="chevronRight"/>
-                            </Flex>
-                        )}
-                        <Heading
-                            className={styles.textAlign}
-                            variant="display-strong-xl">
-                            {person.name}
-                        </Heading>
-                        <Text
-                            className={styles.textAlign}
-                            variant="display-default-xs"
-                            onBackground="neutral-weak">
-                            {person.role}
-                        </Text>
-                        {social.length > 0 && (
-                            <Flex
-                                className={styles.blockAlign}
-                                paddingTop="20" paddingBottom="8" gap="8" wrap>
-                                {social.map((item) => (
-                                    item.link && (
-                                        <Button
-                                            key={item.name}
-                                            href={item.link}
-                                            prefixIcon={item.icon}
-                                            label={item.name}
-                                            size="s"
-                                            variant="tertiary"/>
-                                    )
-                                ))}
-                            </Flex>
-                        )}
-                    </Flex>
 
-                    { about.intro.display && (
-                        <Flex
+                            style={{
+                                left: '0', top: '10%',
+                            }}
+                            // paddingLeft="24" gap="32"
                             direction="column"
-                            textVariant="body-default-l"
-                            fillWidth gap="m" marginBottom="xl">
-                            {about.intro.description}
+                        >
+                            <TableOfContents
+                                structure={structure}
+                                about={about}/>
                         </Flex>
                     )}
+                    {needs.display && (
+                        <Flex
+                            style={{
+                                left: '0', top: '50%',
+                            }}
 
-                    { about.work.display && (
-                        <>
-                            <Heading
-                                as="h2"
-                                id={about.work.title}
-                                variant="display-strong-s"
-                                marginBottom="m">
-                                {about.work.title}
-                            </Heading>
-                            {renderExperiences(about.work.experiences)}
-                        </>
+                            gap="8"
+                            alignItems="center"
+                        >
+                            {RenderNeeds(needs, about.technical)}
+                        </Flex>
                     )}
+                </Flex>
 
-                    { about.studies.display && (
-                        <>
-                            <Heading
-                                as="h2"
-                                id={about.studies.title}
-                                variant="display-strong-s"
-                                marginBottom="m">
-                                {about.studies.title}
-                            </Heading>
-                            {RenderInstitutions(about.studies.institutions)}
-                        </>
-                    )}
+                <Flex
+                    fillWidth
+                    mobileDirection="column" justifyContent="center">
+                    {about.displayAvatar && (
+                        <Flex
+                            className={styles.avatar}
+                            minWidth="160" paddingX="l" paddingBottom="xl" gap="m"
+                            flex={3} direction="column" alignItems="center">
+                            <Avatar
+                                src={person.avatar}
+                                size="xl"/>
 
-                    { about.technical.display && (
-                        <>
-                            <Heading
-                                as="h2"
-                                id={about.technical.title}
-                                variant="display-strong-s" marginBottom="40">
-                                {about.technical.title}
-                            </Heading>
-                            {renderSkills(about.technical.skills)}
-                        </>
+                            {person.languages.length > 0 && (
+                                <Flex
+                                    wrap
+                                    gap="8">
+                                    {person.languages.map((language, index) => (
+                                        <Tag
+                                            key={index}
+                                            size="l">
+                                            {language}
+                                        </Tag>
+                                    ))}
+                                </Flex>
+                            )}
+                        </Flex>
                     )}
+                    <Flex
+                        className={styles.blockAlign}
+                        fillWidth flex={9} maxWidth={40} direction="column">
+                        <Flex
+                            id={about.intro.title}
+                            fillWidth minHeight="160"
+                            direction="column" justifyContent="center"
+                            marginBottom="32">
+                            {about.calendar.display && (
+                                <Flex
+                                    className={styles.blockAlign}
+                                    style={{
+                                        backdropFilter: 'blur(var(--static-space-1))',
+                                        border: '1px solid var(--brand-alpha-medium)',
+                                        width: 'fit-content'
+                                    }}
+                                    alpha="brand-weak" radius="full"
+                                    fillWidth padding="4" gap="8" marginBottom="m"
+                                    alignItems="center">
+                                    <Flex paddingLeft="12">
+                                        <Icon
+                                            name="calendar"
+                                            onBackground="brand-weak"/>
+                                    </Flex>
+                                    <Flex
+                                        paddingX="8">
+                                        Schedule a call
+                                    </Flex>
+                                    <IconButton
+                                        href={about.calendar.link}
+                                        data-border="rounded"
+                                        variant="tertiary"
+                                        icon="chevronRight"/>
+                                </Flex>
+                            )}
+                            <Heading
+                                className={styles.textAlign}
+                                variant="display-strong-xl">
+                                {person.name}
+                            </Heading>
+                            <Text
+                                className={styles.textAlign}
+                                variant="display-default-xs"
+                                onBackground="neutral-weak">
+                                {person.role}
+                            </Text>
+                            {social.length > 0 && (
+                                <Flex
+                                    className={styles.blockAlign}
+                                    paddingTop="20" paddingBottom="8" gap="8" wrap>
+                                    {social.map((item) => (
+                                        item.link && (
+                                            <Button
+                                                key={item.name}
+                                                href={item.link}
+                                                prefixIcon={item.icon}
+                                                label={item.name}
+                                                size="s"
+                                                variant="tertiary"/>
+                                        )
+                                    ))}
+                                </Flex>
+                            )}
+                        </Flex>
+
+                        {about.intro.display && (
+                            <Flex
+                                direction="column"
+                                textVariant="body-default-l"
+                                fillWidth gap="m" marginBottom="xl">
+                                {about.intro.description}
+                            </Flex>
+                        )}
+
+                        {about.work.display && (
+                            <>
+                                <Heading
+                                    as="h2"
+                                    id={about.work.title}
+                                    variant="display-strong-s"
+                                    marginBottom="m">
+                                    {about.work.title}
+                                </Heading>
+                                {renderExperiences(about.work.experiences)}
+                            </>
+                        )}
+
+                        {about.studies.display && (
+                            <>
+                                <Heading
+                                    as="h2"
+                                    id={about.studies.title}
+                                    variant="display-strong-s"
+                                    marginBottom="m">
+                                    {about.studies.title}
+                                </Heading>
+                                {RenderInstitutions(about.studies.institutions)}
+                            </>
+                        )}
+
+                        {about.technical.display && (
+                            <>
+                                <Heading
+                                    as="h2"
+                                    id={about.technical.title}
+                                    variant="display-strong-s" marginBottom="40">
+                                    {about.technical.title}
+                                </Heading>
+                                {renderSkills(about.technical.skills)}
+                            </>
+                        )}
+                    </Flex>
                 </Flex>
             </Flex>
         </Flex>

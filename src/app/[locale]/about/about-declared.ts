@@ -1,4 +1,5 @@
 import {ReactElement} from "react";
+import {MapOf, Record} from "immutable";
 
 export declare type Image = {
     width: number;
@@ -70,6 +71,11 @@ declare type Section = MinimalSection & {
     description: ReactElement;
 };
 
+export declare type Technical = MinimalSection & {
+    idToTitle: Map<string, string>;
+    skills: Skill[];
+};
+
 export declare type About = {
     label: string;
     title: string;
@@ -92,9 +98,7 @@ export declare type About = {
     studies: MinimalSection & {
         institutions: Institution[];
     };
-    technical: MinimalSection & {
-        skills: Skill[];
-    };
+    technical: Technical;
 };
 
 export declare type Home = {
@@ -130,6 +134,16 @@ export declare type Newsletter = {
     description: JSX.Element;
 };
 
+export declare type Needs = {
+    display: boolean;
+    db: string;
+    robust: string;
+    cloud: string;
+    microservices: string;
+    devops: string;
+    authentication: string;
+};
+
 export declare type I18nContent = {
     person: Person;
     social: SocialLink[];
@@ -139,4 +153,5 @@ export declare type I18nContent = {
     blog: Blog;
     work: Work;
     gallery: Gallery;
+    needs: Needs;
 };

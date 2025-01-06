@@ -2,6 +2,7 @@
 
 import React from 'react';
 import { Flex, Text } from '@/once-ui/components';
+import {Sidebar} from "@/once-ui/components/Sidebar";
 import styles from './about.module.scss';
 
 interface TableOfContentsProps {
@@ -30,6 +31,7 @@ const TableOfContents: React.FC<TableOfContentsProps> = ({ structure, about }) =
                 behavior: 'smooth',
             });
         }
+        return element !== null;
     };
 
     if (!about.tableOfContent.display) return null;
@@ -38,26 +40,34 @@ const TableOfContents: React.FC<TableOfContentsProps> = ({ structure, about }) =
         <Flex
             style={{
                 left: '0',
-                top: '50%',
-                transform: 'translateY(-50%)',
                 whiteSpace: 'nowrap'
             }}
-            position="fixed"
-            paddingLeft="24" gap="32"
+            alpha={"accent-weak"}
+            border={"brand-strong"}
+            gap="32"
+            paddingRight={"m"}
+            padding={"s"}
             direction="column" hide="m">
-            {structure
-                .filter(section => section.display)
+            {
+                structure
+                .filter(section => section.display && section.items && section.items.length > 0)
                 .map((section, sectionIndex) => (
                 <Flex key={sectionIndex} gap="12" direction="column">
                     <Flex
-                        style={{ cursor: 'pointer' }}
+                        style={{ cursor: 'pointer', borderRadius: '8px' }}
                         className={styles.hover}
+                        padding={"2"}
+                        background={sectionIndex % 2 === 0 ? "accent-strong" : "brand-strong"}
                         gap="8"
+                        align={"left"}
                         alignItems="center"
                         onClick={() => scrollTo(section.title, 80)}>
                         <Flex
                             height="1" minWidth="16"
-                            background="neutral-strong">
+                            style={{
+                                backgroundColor: 'white'
+                            }}
+                        >
                         </Flex>
                         <Text>
                             {section.title}
@@ -65,7 +75,9 @@ const TableOfContents: React.FC<TableOfContentsProps> = ({ structure, about }) =
                     </Flex>
                     {about.tableOfContent.subItems && (
                         <>
-                            {section.items.map((item, itemIndex) => (
+                            {section.items.filter(
+                                item => item.length > 0
+                            ).map((item, itemIndex) => (
                                 <Flex
                                     hide="l"
                                     key={itemIndex}
@@ -73,10 +85,14 @@ const TableOfContents: React.FC<TableOfContentsProps> = ({ structure, about }) =
                                     className={styles.hover}
                                     gap="12" paddingLeft="24"
                                     alignItems="center"
-                                    onClick={() => scrollTo(item, 80)}>
+                                    onClick={() => scrollTo(item, 80) || scrollTo(section.title, 80)}>
                                     <Flex
                                         height="1" minWidth="8"
-                                        background="neutral-strong">
+                                        style={{
+                                            // backgroundColor: 'white'
+                                        }}
+                                        background="neutral-strong"
+                                    >
                                     </Flex>
                                     <Text>
                                         {item}

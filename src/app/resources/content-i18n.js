@@ -137,6 +137,7 @@ const createI18nContent = (t) => {
         technical: {
             display: true, // set to false to hide this section
             title: t("about.technical.title"),
+            idToTitle: new Map(),
             skills: [
                 {
                     get isEmpty() {
@@ -157,6 +158,16 @@ const createI18nContent = (t) => {
                 }
             ]
         }
+    }
+
+    const needs = {
+        display: true,
+        db: t("needs.db"),
+        robust: t("needs.robust"),
+        cloud: t("needs.cloud"),
+        microservices: t("needs.microservices"),
+        devops: t("needs.devops"),
+        authentication: t("needs.authentication"),
     }
 
     const aboutWork = t.raw("about.work.experiences")
@@ -209,8 +220,7 @@ const createI18nContent = (t) => {
             images: images,
         })
     }
-
-    const skills = t.raw("about.technical.skills")
+    const skills = t.raw("about.technical.skills");
     // For each `about.technical.skills.` not used above,
     // add a new skill object:
     for (const [title, skill] of Object.entries(skills)) {
@@ -232,6 +242,7 @@ const createI18nContent = (t) => {
             description: skill.description,
             images: images,
         })
+        about.technical.idToTitle.set(skill.key, title)
     }
 
 
@@ -274,7 +285,8 @@ const createI18nContent = (t) => {
         about,
         blog,
         work,
-        gallery
+        gallery,
+        needs
     }
 };
 
