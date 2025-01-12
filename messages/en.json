@@ -50,7 +50,7 @@
             }
         },
         "technical": {
-            "title": "Technical skills",
+            "title": "Technical Skills",
             "skills": {
                 "Go, Java Spring/Springboot, Python": {
                     "key": "languages",
@@ -62,7 +62,7 @@
                 },
                 "Apache Kafka, Spark, Flink, StarRocks": {
                     "key": "data",
-                    "description": "Developing high-throughput ( > millions msg/sec) data pipelines and stream processing applications."
+                    "description": "Developing high-throughput data pipelines and stream processing applications."
                 },
                 "AWS, GCP": {
                     "key": "cloud",
@@ -70,7 +70,7 @@
                 },
                 "SQL, NoSQL, Graph Databases": {
                     "key": "database",
-                    "description": "Database design and management, including MySQL, PostgreSQL, MongoDB, Redis, and Janusgraph."
+                    "description": "Database design and management, including MySQL, PostgreSQL Redis, and Janusgraph."
                 }
             }
         }
@@ -86,9 +86,9 @@
         "description": "Dev projects by {name}"
     },
     "gallery": {
-        "label": "Gallery",
-        "title": "My photo gallery",
-        "description": "A photo collection by {name}"
+        "label": "Family-Links",
+        "title": "Links and content for family members.",
+        "description": "Are you a member of the Parker-Martin family?"
     },
     "projectCard": {
         "label": "Read Case Study"

@@ -1,17 +1,15 @@
 import { NextApiRequest, NextApiResponse } from 'next';
 import * as cookie from 'cookie';
-import {decodeFromBase64} from "next/dist/build/webpack/loaders/utils";
 import jwt from 'jsonwebtoken';
 
 export default function handler(req: NextApiRequest, res: NextApiResponse) {
     if (req.method === 'POST') {
-        const { password } = req.body;
         const pass64 = process.env.FAMILY_PASSWORD;
         if (!pass64) {
             return res.status(500).json({ message: 'Internal Server Error' });
         }
-        const correctPassword = decodeFromBase64(pass64);
-
+        const correctPassword = atob(pass64);
+        const { password } = req.body;
         if (password === correctPassword) {
             // Generate a JWT on successful login
             const token = jwt.sign(

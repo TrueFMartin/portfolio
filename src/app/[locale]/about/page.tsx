@@ -1,7 +1,7 @@
 import {Avatar, Button, Flex, Heading, Icon, IconButton, SmartImage, Tag, Text} from '@/once-ui/components';
 import {baseURL, renderContent} from '@/app/resources';
 import TableOfContents from '@/components/about/TableOfContents';
-import RenderNeed from '@/components/about/Needs';
+import AutoScroller from '@/components/AutoScroller';
 import styles from '@/components/about/about.module.scss'
 import {getTranslations, unstable_setRequestLocale} from 'next-intl/server';
 import {useTranslations} from 'next-intl';
@@ -181,23 +181,6 @@ function renderImages(images: Image[]) {
     </Flex>;
 }
 
-function RenderNeeds(needs: Needs, technical: Technical) {
-    const getKey = (key: string) => {
-        const want = technical.idToTitle.get(key);
-        return want ? want : technical.title;
-    }
-    return <Flex
-        background={"accent-weak"}
-        border={"accent-strong"}
-        borderStyle={"solid-2"}
-        maxWidth={"160"}
-        fillWidth={true}
-    >
-        {/*TODO in the future, add a Record of need value => skillId somewhere*/}
-        <RenderNeed text={needs.db} skillId={getKey("data")}/>
-    </Flex>;
-}
-
 export default function About(
     {params: {locale}}: { params: { locale: string } }
 ) {
@@ -232,6 +215,7 @@ export default function About(
     ]
     return (
         <Flex
+
             fillWidth maxWidth="m"
             direction="column">
             <script
@@ -256,6 +240,9 @@ export default function About(
                     }),
                 }}
             />
+            <AutoScroller
+                shortCodeMap={about.technical.idToTitle}
+            />
             <Flex>
                 <Flex
                     style={{
@@ -278,18 +265,6 @@ export default function About(
                             <TableOfContents
                                 structure={structure}
                                 about={about}/>
-                        </Flex>
-                    )}
-                    {needs.display && (
-                        <Flex
-                            style={{
-                                left: '0', top: '50%',
-                            }}
-
-                            gap="8"
-                            alignItems="center"
-                        >
-                            {RenderNeeds(needs, about.technical)}
                         </Flex>
                     )}
                 </Flex>
@@ -323,7 +298,8 @@ export default function About(
                     )}
                     <Flex
                         className={styles.blockAlign}
-                        fillWidth flex={9} maxWidth={40} direction="column">
+                        style={{left: "60%"}}
+                        flex={9} maxWidth={"l"} direction="column">
                         <Flex
                             id={about.intro.title}
                             fillWidth minHeight="160"

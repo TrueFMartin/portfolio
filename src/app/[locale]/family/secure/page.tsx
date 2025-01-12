@@ -1,8 +1,10 @@
-import { Flex } from "@/once-ui/components";
+import {Arrow, Avatar, Button, Flex, Grid, Heading, RevealFx, Text} from "@/once-ui/components";
 import MasonryGrid from "@/components/gallery/MasonryGrid";
 import { baseURL, renderContent } from "@/app/resources";
 import { getTranslations, unstable_setRequestLocale } from "next-intl/server";
 import { useTranslations } from "next-intl";
+import React from "react";
+import {getDefaultAutoSelectFamily} from "node:net";
 
 export async function generateMetadata(
 	{params: {locale}}: { params: { locale: string }}
@@ -39,12 +41,13 @@ export async function generateMetadata(
 	};
 }
 
-export default function Gallery(
+export default function FamilySecure(
 	{ params: {locale}}: { params: { locale: string }}
 ) {
 	unstable_setRequestLocale(locale);
 	const t = useTranslations();
 	const { gallery, person } = renderContent(t);
+	const family = gallery
     return (
         <Flex fillWidth>
             <script
@@ -73,7 +76,28 @@ export default function Gallery(
 					}),
 				}}
 			/>
-            <MasonryGrid/>
+            <Flex
+			alignItems={"center"}
+			justifyContent={"center"}
+			>
+				<Flex
+					fillWidth
+					direction="column"
+					paddingY="l" gap="m">
+					<Grid
+					columns={"repeat(2, 1fr)"}
+					>
+						<Flex>
+							First Link
+						</Flex>
+						<Flex>
+							Second Link
+						</Flex>
+					</Grid>
+
+				</Flex>
+
+			</Flex>
         </Flex>
     );
 }

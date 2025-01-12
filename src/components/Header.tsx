@@ -1,9 +1,9 @@
 "use client";
 
 import {useParams} from "next/navigation";
-import {useEffect, useState, useTransition} from "react";
+import React, {useEffect, useState, useTransition} from "react";
 
-import {Flex, ToggleButton} from "@/once-ui/components"
+import {Flex, Icon, IconButton, Text, ToggleButton} from "@/once-ui/components"
 import styles from '@/components/Header.module.scss'
 
 import {routes, display} from '@/app/resources'
@@ -13,6 +13,7 @@ import {Locale, usePathname, useRouter} from '@/i18n/routing';
 import {renderContent} from "@/app/resources";
 import {useTranslations} from "next-intl";
 import {i18n} from "@/app/resources/config";
+import {Warning} from "postcss";
 
 type TimeDisplayProps = {
     timeZone: string;
@@ -112,6 +113,17 @@ export const Header = () => {
         })
     }
 
+    function lastModified(daysBack: number) {
+        const now = new Date();
+        const dateSubtracted = now.setDate(now.getDate() - daysBack);
+        const options: Intl.DateTimeFormatOptions = {
+            year: 'numeric',
+            month: 'long',
+            day: 'numeric',
+        };
+        return new Intl.DateTimeFormat(undefined, options).format(dateSubtracted);
+    }
+
     const t = useTranslations();
     const {person, home, about, blog, work, gallery} = renderContent(t);
 
@@ -178,21 +190,58 @@ export const Header = () => {
                                     <Flex paddingX="2" hide="s">{blog.label}</Flex>
                                 </ToggleButton>
                             )}
-                            {routes['/gallery'] && (
+                            {routes['/family'] && (
                                 <ToggleButton
                                     prefixIcon="gallery"
-                                    href={`/${params?.locale}/gallery`}
-                                    selected={pathname.startsWith('/gallery')}>
+                                    href={`/${params?.locale}/family`}
+                                    selected={pathname.startsWith('/family')}>
                                     <Flex paddingX="2" hide="s">{gallery.label}</Flex>
                                 </ToggleButton>
                             )}
                         </Flex>
                     </Flex>
                 </Flex>
-                <Flex fillWidth justifyContent="flex-end" alignItems="center">
+
+                <Flex fillWidth justifyContent="center" alignItems="center">
+                    <Flex
+                    background={"warning-strong"}
+                    paddingX={"4"}
+                    radius={"xs"}
+                    marginRight={"20"}
+                    >
+                    <Flex
+                    // background={"warning-strong"}
+                    // alpha={"warning-weak"}
+                    padding={"4"}
+                    justifyContent={"center"}
+                    alignItems={"center"}
+                    flex={1}
+                    // maxHeight={"36"}
+                    // gap={"4"}
+                    // fillWidth={true}
+                    >
+                        <Icon
+                            name={"warningTriangle"}
+                            size="xl">
+                        </Icon>
+                        <Text
+                        align={"center"}
+                        wrap={"stable"}
+                        >
+                            This website is under development,
+                            last updated on {lastModified(8)}
+                        </Text>
+                        <Icon
+                            name={"warningTriangle"}
+                            size="xl">
+                        </Icon>
+                    </Flex>
+                    </Flex>
+                    {/*<Flex fillWidth></Flex>*/}
                     <Flex
                         paddingRight="12"
-                        justifyContent="flex-end" alignItems="center"
+                        justifyContent="flex-end"
+                        alignItems="center"
                         textVariant="body-default-s"
                         gap="20">
                         {routing.locales.length > 1 &&

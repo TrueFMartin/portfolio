@@ -8,6 +8,8 @@ import { Mailchimp } from '@/components';
 import { Posts } from '@/components/blog/Posts';
 import { getTranslations, unstable_setRequestLocale } from 'next-intl/server';
 import { useTranslations } from 'next-intl';
+import {Needs, Technical} from "@/app/[locale]/about/about-declared";
+import RenderNeed from "@/components/about/Needs";
 
 export async function generateMetadata(
 	{params: {locale}}: { params: { locale: string }}
@@ -42,12 +44,32 @@ export async function generateMetadata(
 	};
 }
 
+function RenderNeeds(needs: Needs) {
+	return <Flex
+		background={"accent-weak"}
+		border={"accent-strong"}
+		borderStyle={"solid-1"}
+		radius={"m"}
+		gap={"m"}
+		margin={"m"}
+		padding={"m"}
+		fillWidth={true}
+	>
+		{/*TODO in the future, add a Record of need value => skillId somewhere*/}
+		<RenderNeed route={"/about"} text={needs.db} skillId={"data"} />
+		<RenderNeed route={"/about"} text={needs.robust} skillId={"infrastructure"}/>
+		<RenderNeed route={"/about"} text={needs.cloud} skillId={"cloud"}/>
+		<RenderNeed route={"/about"} text={needs.microservices} skillId={"infrastructure"}/>
+		<RenderNeed route={"/about"} text={needs.authentication} skillId={"languages"}/>
+	</Flex>;
+}
+
 export default function Home(
 	{ params: {locale}}: { params: { locale: string }}
 ) {
 	unstable_setRequestLocale(locale);
 	const t = useTranslations();
-	const { home, about, person, newsletter } = renderContent(t);
+	const { home, about, person, needs } = renderContent(t);
 	return (
 		<Flex
 			maxWidth="m" fillWidth gap="xl"
@@ -124,31 +146,23 @@ export default function Home(
 					</Flex>
 				
 			</Flex>
-			<RevealFx translateY="16" delay={0.6}>
-				<Projects range={[1,1]} locale={locale}/>
-			</RevealFx>
-			{routes['/blog'] && (
-				<Flex
-					fillWidth gap="24"
-					mobileDirection="column">
-					<Flex flex={1} paddingLeft="l">
-						<Heading
-							as="h2"
-							variant="display-strong-xs"
-							wrap="balance">
-							Latest from the blog
-						</Heading>
-					</Flex>
+			{/*<RevealFx translateY="16" delay={0.6}>*/}
+			{/*	/!*<Projects range={[1,1]} locale={locale}/>*!/*/}
+			{/*</RevealFx>*/}
+			<Flex>
+				{needs.display && (
 					<Flex
-						flex={3} paddingX="20">
-						<Posts range={[1,2]} columns="2" locale={locale}/>
+						// style={{
+						// 	left: '0', top: '50%',
+						// }}
+
+						gap="8"
+						// alignItems="center"
+					>
+						{RenderNeeds(needs)}
 					</Flex>
-				</Flex>
-			)}
-			<Projects range={[2]} locale={locale}/>
-			{ newsletter.display &&
-				<Mailchimp newsletter={newsletter} />
-			}
+				)}
+			</Flex>
 		</Flex>
 	);
 }
