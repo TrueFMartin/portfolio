@@ -11,6 +11,7 @@ const withNextIntl = createNextIntlPlugin();
 /** @type {import('next').NextConfig} */
 const nextConfig = {
     pageExtensions: ['ts', 'tsx', 'md', 'mdx'],
+    output: "standalone"
 };
 
 export default withNextIntl(withMDX(nextConfig));

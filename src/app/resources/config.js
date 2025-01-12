@@ -10,11 +10,12 @@ const i18nOptions = {
 }
 
 const routes = {
-    '/':        true,
-    '/about':   true,
-    '/work':    true,
-    '/blog':    false,
+    '/': true,
+    '/about': true,
+    '/work': true,
+    '/blog': false,
     '/family': true,
+    // '/api/healthcheck': true,
 }
 
 // Enable password protection on selected routes
@@ -40,20 +41,20 @@ const effects = {
 }
 
 const style = {
-    theme:       'dark',         // dark | light
-    neutral:     'gray',         // sand | gray | slate
-    brand:       'green',      // blue | indigo | violet | magenta | pink | red | orange | yellow | moss | green | emerald | aqua | cyan
-    accent:      'aqua',       // blue | indigo | violet | magenta | pink | red | orange | yellow | moss | green | emerald | aqua | cyan
-    solid:       'color',     // color | contrast
-    solidStyle:  'flat',         // flat | plastic
-    border:      'rounded',      // rounded | playful | conservative
-    surface:     'filled',  // filled | translucent
-    transition:  'all'           // all | micro | macro
+    theme: 'dark',         // dark | light
+    neutral: 'gray',         // sand | gray | slate
+    brand: 'green',      // blue | indigo | violet | magenta | pink | red | orange | yellow | moss | green | emerald | aqua | cyan
+    accent: 'aqua',       // blue | indigo | violet | magenta | pink | red | orange | yellow | moss | green | emerald | aqua | cyan
+    solid: 'color',     // color | contrast
+    solidStyle: 'flat',         // flat | plastic
+    border: 'rounded',      // rounded | playful | conservative
+    surface: 'filled',  // filled | translucent
+    transition: 'all'           // all | micro | macro
 }
 
 const display = {
     location: true,
-    time:     true
+    time: true
 }
 
 const mailchimp = {
@@ -73,4 +74,4 @@ const mailchimp = {
     }
 }
 
-export { routes, protectedRoutes, effects, style, display, mailchimp, baseURL, i18n, i18nOptions };
+export {routes, protectedRoutes, effects, style, display, mailchimp, baseURL, i18n, i18nOptions};

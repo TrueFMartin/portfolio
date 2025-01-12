@@ -134,7 +134,7 @@ export default function Home(
 										{about.displayAvatar && (
 											<Avatar
 												style={{marginLeft: '-0.75rem', marginRight: '0.25rem'}}
-												src={person.avatar}
+												src={person.avatar.replace(".png", "-small.png")}
 												size="m"/>
 											)}
 											{t("about.title")}

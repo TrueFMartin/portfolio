@@ -210,15 +210,10 @@ export const Header = () => {
                     marginRight={"20"}
                     >
                     <Flex
-                    // background={"warning-strong"}
-                    // alpha={"warning-weak"}
                     padding={"4"}
                     justifyContent={"center"}
                     alignItems={"center"}
                     flex={1}
-                    // maxHeight={"36"}
-                    // gap={"4"}
-                    // fillWidth={true}
                     >
                         <Icon
                             name={"warningTriangle"}
@@ -237,7 +232,6 @@ export const Header = () => {
                         </Icon>
                     </Flex>
                     </Flex>
-                    {/*<Flex fillWidth></Flex>*/}
                     <Flex
                         paddingRight="12"
                         justifyContent="flex-end"

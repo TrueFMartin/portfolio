@@ -12,7 +12,7 @@ const createI18nContent = (t) => {
             return `${this.firstName} ${this.lastName}`;
         },
         role: t("person.role"),
-        avatar: '/images/avatar.png',
+        avatar: '/images/common/avatar.png',
         locationTz: 'America/Detroit',        // Expecting the IANA time zone identifier, e.g., 'Europe/Vienna'
         locationActual: 'Greenville, SC',
         get location() {

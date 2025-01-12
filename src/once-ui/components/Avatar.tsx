@@ -7,6 +7,8 @@ import styles from './Avatar.module.scss';
 
 interface AvatarProps {
     size?: 'xs' | 's' | 'm' | 'l' | 'xl';
+    width?: number;
+    height?: number;
     value?: string;
     src?: string;
     loading?: boolean;
@@ -36,6 +38,8 @@ const statusIndicatorSizeMapping: Record<'xs' | 's' | 'm' | 'l' | 'xl', 's' | 'm
 
 const Avatar: React.FC<AvatarProps> = forwardRef<HTMLDivElement, AvatarProps>(({
     size = 'm',
+    width,
+    height,
     value,
     src,
     loading,

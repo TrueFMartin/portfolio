@@ -10,12 +10,8 @@ import {
     I18nContent,
     Image,
     Skill,
-    Work,
     WorkExperience,
-    Person,
     Institution,
-    Needs,
-    Technical
 } from "@/app/[locale]/about/about-declared";
 
 export async function generateMetadata(
@@ -190,7 +186,6 @@ export default function About(
     const person = res.person;
     const about = res.about;
     const social = res.social;
-    const needs = res.needs;
     const structure = [
         {
             title: about.intro.title,
@@ -229,7 +224,7 @@ export default function About(
                         jobTitle: person.role,
                         description: about.intro.description,
                         url: `https://${baseURL}/about`,
-                        image: `${baseURL}/images/${person.avatar}`,
+                        image: `${baseURL}/${person.avatar}`,
                         sameAs: social
                             .filter((item) => item.link && !item.link.startsWith('mailto:')) // Filter out empty links and email links
                             .map((item) => item.link),
