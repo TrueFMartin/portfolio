@@ -1,8 +1,13 @@
-repositories:
-  - name: portfolio
-    url: ./charts/portfolio
-
 releases:
   - name: portfolio
-    chart: portfolio
+    chart: ./charts/portfolio
     version: 0.1.0
+    set:
+      - name: image.repository
+        value: {{ requiredEnv "IMAGE" }}
+      - name: image.tag
+        value: latest
+      - name: service.port
+        value: 3000
+      - name: service.loadBalancerIP
+        value: {{ requiredEnv "LOAD_BALANCER_IP" }}

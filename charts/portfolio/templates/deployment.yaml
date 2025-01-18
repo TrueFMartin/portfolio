@@ -44,13 +44,15 @@ spec:
             - name: FAMILY_PASSWORD
               valueFrom:
                   secretKeyRef:
-                    name: portfolio-login
+                    name: portfolio-secret
                     key: FAMILY_PASSWORD
             - name: JWT_SECRET
               valueFrom:
                   secretKeyRef:
-                      name: portfolio-login
+                      name: portfolio-secret
                       key: JWT_SECRET
+            - name: PORT
+              value: {{ .Values.service.port | quote }}
           livenessProbe:
             {{- toYaml .Values.livenessProbe | nindent 12 }}
           readinessProbe:
