@@ -4,11 +4,10 @@ import jwt from 'jsonwebtoken';
 
 export default function handler(req: NextApiRequest, res: NextApiResponse) {
     if (req.method === 'POST') {
-        const pass64 = process.env.FAMILY_PASSWORD;
-        if (!pass64) {
+        const correctPassword = process.env.FAMILY_PASSWORD;
+        if (!correctPassword) {
             return res.status(500).json({ message: 'Internal Server Error' });
         }
-        const correctPassword = atob(pass64);
         const { password } = req.body;
         if (password === correctPassword) {
             // Generate a JWT on successful login
