@@ -11,6 +11,7 @@ substitutions:
   _LOAD_BALANCER_IP: 'must_substitute'
 # Automatically apply the substitutions (env vars) to each step:
 options:
+  defaultLogsBucketBehavior: REGIONAL_USER_OWNED_BUCKET
   automapSubstitutions: true
   dynamicSubstitutions: true
   env:
