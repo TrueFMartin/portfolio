@@ -3,10 +3,12 @@ releases:
     chart: ./charts/portfolio
     version: 0.1.0
     set:
+      - name: podlables.commit
+        value: {{ requiredEnv "SHORT_SHA" }}
       - name: image.repository
-        value: {{ requiredEnv "IMAGE" }}
+        value: {{ requiredEnv "_IMAGE_REPO" }}
       - name: image.tag
-        value: latest
+        value: {{ requiredEnv "_IMAGE_TAG" }}
       - name: service.port
         value: 3000
       - name: service.loadBalancerIP
