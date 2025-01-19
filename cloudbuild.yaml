@@ -1,0 +1,60 @@
+# Set global env vars:
+substitutions:
+  _PROJECT_NAME: 'portfolio'
+  _REPOSITORY_NAME: 'parkermartin'
+  _IMAGE_REPO: 'us-east1-docker.pkg.dev/${PROJECT_ID}/${_REPOSITORY_NAME}/${_PROJECT_NAME}'
+  _IMAGE_TAG: '${SHORT_SHA}'
+  _IMAGE: '${_IMAGE_REPO}:${_IMAGE_TAG}'
+  _CLUSTER_NAME: 'default'
+  # Substitute in trigger or CLI with:
+  # --substitutions=_LOAD_BALANCER_IP="34.74.63.100",_SOME_VALUE="some_value"
+  _LOAD_BALANCER_IP: 'must_substitute'
+# Automatically apply the substitutions (env vars) to each step:
+options:
+  automapSubstitutions: true
+  dynamicSubstitutions: true
+  env:
+    - '_PROJECT_NAME=${_PROJECT_NAME}'
+    - '_REPOSITORY_NAME=${_REPOSITORY_NAME}'
+    - '_IMAGE_REPO=${_IMAGE_REPO}'
+    - '_IMAGE_TAG=${_IMAGE_TAG}'
+    - '_IMAGE=${_IMAGE}'
+    - '_CLUSTER_NAME=${_CLUSTER_NAME}'
+    - '_LOAD_BALANCER_IP=${_LOAD_BALANCER_IP}'
+
+
+images:
+  - '${_IMAGE}'
+
+steps:
+  # Check if the image already exists.
+  # If not, build
+  - name: 'gcr.io/cloud-builders/docker'
+    script: |
+      if docker pull ${_IMAGE}; then
+        echo "Image ${_IMAGE} already exists. Skipping build."
+      else
+        echo "Image ${_IMAGE} does not exist. Proceeding with build."
+        docker build -t ${_IMAGE} .
+      fi
+
+  # Docker Push
+  # Still run even if no build,
+  # We must satisfy the 'images' requirement.
+  # This also adds build-id information to the image
+  - name: 'gcr.io/cloud-builders/docker'
+    args: [ 'push', '${_IMAGE}']
+
+  # Helm Diff
+  - &helm
+    name: "gcr.io/$PROJECT_ID/helmfile"
+    args: ["diff"]
+    env:
+      - "SHORT_SHA=${SHORT_SHA}"
+      - "LOAD_BALANCER_IP=${_LOAD_BALANCER_IP}"
+      - "CLOUDSDK_COMPUTE_REGION=us-east1"
+      - "CLOUDSDK_CONTAINER_CLUSTER=${_CLUSTER_NAME}"
+
+  # Helm Apply
+  - <<: *helm
+    args: [ "apply" ]
