@@ -3,7 +3,7 @@ releases:
     chart: ./charts/portfolio
     version: 0.1.0
     set:
-      - name: podlables.commit
+      - name: podLabels.commit
         value: {{ requiredEnv "SHORT_SHA" }}
       - name: image.repository
         value: {{ requiredEnv "_IMAGE_REPO" }}
