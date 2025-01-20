@@ -12,8 +12,8 @@ spec:
   {{- end }}
   ports:
     - port: {{ .Values.service.port }}
-      targetPort: http
-      protocol: TCP
-      name: http
+      targetPort: {{ .Values.service.targetPort }}
+      protocol: {{ .Values.service.protocol }}
+      name: {{ .Values.service.portName }}
   selector:
     {{- include "portfolio.selectorLabels" . | nindent 4 }}

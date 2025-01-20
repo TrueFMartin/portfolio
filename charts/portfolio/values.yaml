@@ -53,15 +53,21 @@ securityContext: {}
 # This is for setting up a service more information can be found here: https://kubernetes.io/docs/concepts/services-networking/service/
 service:
   # This sets the service type more information can be found here: https://kubernetes.io/docs/concepts/services-networking/service/#publishing-services-service-types
-  type: LoadBalancer
+  type: NodePort
   # This sets the ports more information can be found here: https://kubernetes.io/docs/concepts/services-networking/service/#field-spec-ports
-  port: 3000
-  loadBalancerIP: "" # Set in helmfile
+  port: 80
+  portName: http
+  protocol: TCP
+  targetPort: 3000
+  loadBalancerIP: null # Set in helmfile
 
 # This block is for setting up the ingress for more information can be found here: https://kubernetes.io/docs/concepts/services-networking/ingress/
 ingress:
-  enabled: false
-  className: nginx
+  domain: parkermartin.org
+  enabled: true
+  className: "gce"
+  useManagedCert: true
+  globalStaticIPName: null # Set in helmfile
   hosts:
     - host: parkermartin.org
       paths:

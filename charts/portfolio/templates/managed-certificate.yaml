@@ -1,0 +1,10 @@
+{{- if .Values.ingress.useManagedCert -}}
+apiVersion: networking.gke.io/v1
+kind: ManagedCertificate
+metadata:
+  name: {{ include "portfolio.fullname" . }}
+spec:
+  domains:
+    - {{ .Values.ingress.domain }}
+    - www.{{ .Values.ingress.domain }}
+{{- end }}
