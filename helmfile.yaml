@@ -12,4 +12,4 @@ releases:
       - name: service.port
         value: 3000
       - name: ingress.globalStaticIPName
-        value: {{ .Release.Name }}-ip-global
+        value: portfolio-ip-global
