@@ -11,5 +11,5 @@ releases:
         value: {{ requiredEnv "_IMAGE_TAG" }}
       - name: service.port
         value: 3000
-      - name: service.loadBalancerIP
-        value: {{ requiredEnv "LOAD_BALANCER_IP" }}
+      - name: ingress.globalStaticIPName
+        value: {{ .Release.Name }}-ip-global

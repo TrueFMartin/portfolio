@@ -4,15 +4,27 @@ kind: Ingress
 metadata:
   name: {{ include "portfolio.fullname" . }}
   labels:
-    {{- include "portfolio.labels" . | nindent 4 }}
-  {{- with .Values.ingress.annotations }}
+    {{- include "portfolio.labels" . | nindent 4 }} 
   annotations:
-    {{- toYaml . | nindent 4 }}
-  {{- end }}
+    {{- if .Values.ingress.useManagedCert }}
+    kubernetes.io/ingress.global-static-ip-name: {{ .Values.ingress.globalStaticIPName }}
+    networking.gke.io/managed-certificates: {{ include "portfolio.fullname" . }}
+    kubernetes.io/ingress.class: {{ .Values.ingress.className }}
+    {{- end }}
 spec:
-  {{- with .Values.ingress.className }}
-  ingressClassName: {{ . }}
-  {{- end }}
+  ingressClassName: {{ .Values.ingress.className }}
+  ####### Managed Certificate Ingress #######
+  # If we are using a managed cert, use 'defaultBackend'
+  {{- if .Values.ingress.useManagedCert }}
+  defaultBackend:
+    service:
+      name: {{ include "portfolio.fullname" . }}
+      port:
+        number: {{ .Values.service.port }}
+
+  ####### Normal Ingress #######
+  # Else use normal ingress setup
+  {{- else }}
   {{- if .Values.ingress.tls }}
   tls:
     {{- range .Values.ingress.tls }}
@@ -40,4 +52,5 @@ spec:
                   number: {{ $.Values.service.port }}
           {{- end }}
     {{- end }}
+  {{- end }}
 {{- end }}

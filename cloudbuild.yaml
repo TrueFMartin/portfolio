@@ -6,9 +6,6 @@ substitutions:
   _IMAGE_TAG: '${SHORT_SHA}'
   _IMAGE: '${_IMAGE_REPO}:${_IMAGE_TAG}'
   _CLUSTER_NAME: 'default'
-  # Substitute in trigger or CLI with:
-  # --substitutions=_LOAD_BALANCER_IP="34.74.63.100",_SOME_VALUE="some_value"
-  _LOAD_BALANCER_IP: 'must_substitute'
 # Automatically apply the substitutions (env vars) to each step:
 options:
   defaultLogsBucketBehavior: REGIONAL_USER_OWNED_BUCKET
@@ -21,7 +18,6 @@ options:
     - '_IMAGE_TAG=${_IMAGE_TAG}'
     - '_IMAGE=${_IMAGE}'
     - '_CLUSTER_NAME=${_CLUSTER_NAME}'
-    - '_LOAD_BALANCER_IP=${_LOAD_BALANCER_IP}'
 
 
 images:
@@ -38,13 +34,8 @@ steps:
         echo "Image ${_IMAGE} does not exist. Proceeding with build."
         docker build -t ${_IMAGE} .
       fi
-
-  # Docker Push
-  # Still run even if no build,
-  # We must satisfy the 'images' requirement.
-  # This also adds build-id information to the image
-  - name: 'gcr.io/cloud-builders/docker'
-    args: [ 'push', '${_IMAGE}']
+      echo "Image ${_IMAGE} is ready, pushing."
+      docker push ${_IMAGE}
 
   # Helm Diff
   - &helm
@@ -52,7 +43,6 @@ steps:
     args: ["diff"]
     env:
       - "SHORT_SHA=${SHORT_SHA}"
-      - "LOAD_BALANCER_IP=${_LOAD_BALANCER_IP}"
       - "CLOUDSDK_COMPUTE_REGION=us-east1"
       - "CLOUDSDK_CONTAINER_CLUSTER=${_CLUSTER_NAME}"
 
