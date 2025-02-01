@@ -11,11 +11,11 @@ import { Source_Code_Pro } from 'next/font/google';
 
 import { NextIntlClientProvider } from 'next-intl';
 import { getMessages, getTranslations, unstable_setRequestLocale } from 'next-intl/server';
-
 import { routing } from "@/i18n/routing";
 import { renderContent } from "@/app/resources";
 import { Background, Flex } from "@/once-ui/components";
-
+import {SessionProvider} from "@/components/Proivder";
+import { auth } from "@/auth"
 export async function generateMetadata(
 	{ params: { locale }}: { params: { locale: string }}
 ) {
@@ -89,7 +89,9 @@ export default async function RootLayout({
 } : RootLayoutProps) {
 	unstable_setRequestLocale(locale);
 	const messages = await getMessages();
+	const session = await auth();
 	return (
+		<SessionProvider session={session}>
 		<NextIntlClientProvider messages={messages}>
 			<Flex
 				as="html" lang="en"
@@ -126,7 +128,7 @@ export default async function RootLayout({
 						<Flex
 							justifyContent="center"
 							fillWidth minHeight="0">
-							<RouteGuard>
+							<RouteGuard session={session}>
 								{children}
 							</RouteGuard>
 						</Flex>
@@ -135,5 +137,6 @@ export default async function RootLayout({
 				</Flex>
 			</Flex>
 		</NextIntlClientProvider>
+		</SessionProvider>
 	);
 }

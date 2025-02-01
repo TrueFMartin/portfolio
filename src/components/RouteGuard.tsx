@@ -5,12 +5,17 @@ import { usePathname } from '@/i18n/routing';
 import { routes, protectedRoutes } from '@/app/resources';
 import { Flex, Spinner, Input, Button, Heading } from '@/once-ui/components';
 import NotFound from "@/app/[locale]/not-found";
+import GoogleLogin from "@/components/GoogleLogin";
+import {auth} from "@/auth";
+import {Session} from "next-auth";
+
 
 interface RouteGuardProps {
     children: React.ReactNode;
+    session: Session | null;
 }
 
-const RouteGuard: React.FC<RouteGuardProps> = ({ children }) => {
+const RouteGuard: React.FC<RouteGuardProps> = ({ children, session }) => {
     const pathname = usePathname();
     const [isRouteEnabled, setIsRouteEnabled] = useState(false);
     const [isPasswordRequired, setIsPasswordRequired] = useState(false);
@@ -50,11 +55,11 @@ const RouteGuard: React.FC<RouteGuardProps> = ({ children }) => {
 
             if (protectedRoutes[pathname as keyof typeof protectedRoutes]) {
                 setIsPasswordRequired(true);
-
-                const response = await fetch('/api/check-auth');
-                if (response.ok) {
-                    setIsAuthenticated(true);
-                }
+                setIsAuthenticated(session?.user !== undefined);
+                // const response = await fetch('/api/auth/google');
+                // if (response.ok) {
+                //     setIsAuthenticated(true);
+                // }
             }
 
             setLoading(false);
@@ -100,48 +105,49 @@ const RouteGuard: React.FC<RouteGuardProps> = ({ children }) => {
 
     if (isPasswordRequired && !isAuthenticated) {
         return (
-        <Flex
-            fillWidth paddingY="128" maxWidth={24} gap="24"
-            justifyContent="center" direction="column" alignItems="center">
-            <Heading align="center" wrap="balance">
-                This page is password protected
-            </Heading>
-            <Input
-                id={"user"}
-                label={"Enter username"}
-                type={"email"}
-                onLoad={() => setUserError(undefined)}
-                onChange={(e) => {
-                    setUser(e.target.value);
-                    setUserError(undefined);
-                }}
-                error={userError}
-            >
+            <Flex
+                fillWidth paddingY="128" maxWidth={24} gap="24"
+                justifyContent="center" direction="column" alignItems="center">
+                <Heading align="center" wrap="balance">
+                    This page is password protected
+                </Heading>
+                <GoogleLogin />
+                <Input
+                    id={"user"}
+                    label={"Enter username"}
+                    type={"email"}
+                    onLoad={() => setUserError(undefined)}
+                    onChange={(e) => {
+                        setUser(e.target.value);
+                        setUserError(undefined);
+                    }}
+                    error={userError}
+                >
 
-            </Input>
-            <Input
-                id="password"
-                type="password"
-                label="Enter password"
-                onLoad={() => setPasswordError(undefined)}
-                onChange={(e) => {
-                    setPassword(e.target.value);
-                    setPasswordError(undefined);
-                }}
-                onKeyUp={(event => {
-                    if (event.key === 'Enter') {
-                        handlePasswordSubmit();
-                    }
-                })}
-                error={passwordError}/>
-            <Button onClick={handlePasswordSubmit} size="l">
-                Submit
-            </Button>
-        </Flex>
+                </Input>
+                <Input
+                    id="password"
+                    type="password"
+                    label="Enter password"
+                    onLoad={() => setPasswordError(undefined)}
+                    onChange={(e) => {
+                        setPassword(e.target.value);
+                        setPasswordError(undefined);
+                    }}
+                    onKeyUp={(event => {
+                        if (event.key === 'Enter') {
+                            handlePasswordSubmit();
+                        }
+                    })}
+                    error={passwordError}/>
+                <Button onClick={handlePasswordSubmit} size="l">
+                    Submit
+                </Button>
+            </Flex>
         );
     }
 
     return <>{children}</>;
 };
 
-export { RouteGuard };
+export {RouteGuard};

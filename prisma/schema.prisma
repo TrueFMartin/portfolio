@@ -1,0 +1,177 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "cockroachdb"
+  url      = env("DATABASE_URL")
+}
+
+model Book {
+  id     String  @id @default(cuid())
+  title  String
+  author String?
+  tocUrl String
+
+  bookPositions BookPosition[]
+}
+
+model BookPosition {
+  id           String             @id @default(cuid())
+  status       BookPositionStatus @default(IN_PROGRESS)
+  book         Book               @relation(fields: [bookId], references: [id])
+  bookId       String
+  user         User               @relation(fields: [userId], references: [id])
+  userId       String
+  readUntilUrl String?
+  createdAt    DateTime           @default(now())
+  updatedAt    DateTime           @updatedAt
+}
+
+enum BookPositionStatus {
+  IN_PROGRESS
+  FINISHED
+  ERROR
+}
+
+model Permission {
+  id        String   @id @default(cuid())
+  name      String   @unique
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  users              User[]
+  permissionRequests PermissionRequests[]
+}
+
+enum PermissionType {
+  NONE
+  READ_SINGLE
+  READ_MANY
+  APPROVE_USERS
+}
+
+model PermissionRequests {
+  id           String                  @id @default(cuid())
+  userId       String
+  permissionId String
+  note         String?
+  status       PermissionRequestStatus @default(PENDING)
+
+  permission Permission @relation(fields: [permissionId], references: [id])
+  user       User       @relation(fields: [userId], references: [id])
+}
+
+enum PermissionRequestStatus {
+  PENDING
+  APPROVED
+  DENIED
+}
+
+model Subscription {
+  id        String             @id @default(cuid())
+  userId    String
+  status    SubscriptionStatus @default(ACTIVE)
+  plan      SubscriptionPlan   @default(INVALID)
+  startDate DateTime           @default(now())
+  endDate   DateTime
+  createdAt DateTime           @default(now())
+  updatedAt DateTime           @updatedAt
+
+  user User @relation(fields: [userId], references: [id])
+
+  Payment Payment[]
+}
+
+enum SubscriptionStatus {
+  ACTIVE
+  INACTIVE
+  CANCELED
+  EXPIRED
+}
+
+enum SubscriptionPlan {
+  INVALID // Set 0 value to be invalid, must select proper field
+  TRIAL
+  SINGLE
+  FULL
+}
+
+model Payment {
+  id             String        @id @default(cuid())
+  userId         String
+  subscriptionId String
+  amount         Float
+  currency       String        @default("USD")
+  status         PaymentStatus @default(PENDING)
+  paymentDate    DateTime      @default(now())
+  createdAt      DateTime      @default(now())
+  updatedAt      DateTime      @updatedAt
+
+  user         User         @relation(fields: [userId], references: [id])
+  subscription Subscription @relation(fields: [subscriptionId], references: [id])
+}
+
+enum PaymentStatus {
+  PENDING
+  COMPLETED
+  FAILED
+}
+
+model User {
+  id            String    @id @default(cuid())
+  name          String?
+  email         String    @unique
+  emailVerified DateTime?
+  image         String?
+  accounts      Account[]
+  sessions      Session[]
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  permissions        Permission[]
+  permissionRequests PermissionRequests[]
+  bookPositions      BookPosition[]
+  subscriptions      Subscription[]
+  payments           Payment[]
+}
+
+model Account {
+  userId            String
+  type              String
+  provider          String
+  providerAccountId String
+  refresh_token     String?
+  access_token      String?
+  expires_at        Int?
+  token_type        String?
+  scope             String?
+  id_token          String?
+  session_state     String?
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@id([provider, providerAccountId])
+}
+
+model Session {
+  sessionToken String   @unique
+  userId       String
+  expires      DateTime
+  user         User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model VerificationToken {
+  identifier String
+  token      String
+  expires    DateTime
+
+  @@id([identifier, token])
+}

@@ -53,6 +53,21 @@ spec:
                       key: JWT_SECRET
             - name: PORT
               value: {{ .Values.service.targetPort | quote }}
+            - name: DATABASE_URL
+              valueFrom:
+                    secretKeyRef:
+                        name: db-connection
+                        key: DATABASE_URL
+            - name: AUTH_GOOGLE_ID
+              valueFrom:
+                  secretKeyRef:
+                      name: oauth-google
+                      key: CLIENT_ID
+            - name: AUTH_GOOGLE_SECRET
+              valueFrom:
+                secretKeyRef:
+                  name: oauth-google
+                  key: CLIENT_SECRET
           livenessProbe:
             {{- toYaml .Values.livenessProbe | nindent 12 }}
           readinessProbe:
