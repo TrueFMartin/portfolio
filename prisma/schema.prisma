@@ -34,16 +34,6 @@ enum BookPositionStatus {
   ERROR
 }
 
-model Permission {
-  id        String   @id @default(cuid())
-  name      String   @unique
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
-
-  users              User[]
-  permissionRequests PermissionRequests[]
-}
-
 enum PermissionType {
   NONE
   READ_SINGLE
@@ -51,21 +41,20 @@ enum PermissionType {
   APPROVE_USERS
 }
 
-model PermissionRequests {
-  id           String                  @id @default(cuid())
-  userId       String
-  permissionId String
-  note         String?
-  status       PermissionRequestStatus @default(PENDING)
-
-  permission Permission @relation(fields: [permissionId], references: [id])
-  user       User       @relation(fields: [userId], references: [id])
-}
-
 enum PermissionRequestStatus {
   PENDING
   APPROVED
   DENIED
+}
+
+model PermissionRequests {
+  id     String                  @id @default(cuid())
+  userId String
+  note   String?
+  status PermissionRequestStatus @default(PENDING)
+
+  permissionType PermissionType @default(NONE)
+  user           User           @relation(fields: [userId], references: [id])
 }
 
 model Subscription {
@@ -130,7 +119,7 @@ model User {
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
-  permissions        Permission[]
+  permissionType     PermissionType @default(NONE)
   permissionRequests PermissionRequests[]
   bookPositions      BookPosition[]
   subscriptions      Subscription[]

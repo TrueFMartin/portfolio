@@ -16,6 +16,9 @@ import { renderContent } from "@/app/resources";
 import { Background, Flex } from "@/once-ui/components";
 import {SessionProvider} from "@/components/Proivder";
 import { auth } from "@/auth"
+import {ComponentPreviews, useInitial} from "@/components/dev";
+import {DevSupport} from "@react-buddy/ide-toolbox";
+import {FC} from "react";
 export async function generateMetadata(
 	{ params: { locale }}: { params: { locale: string }}
 ) {
@@ -93,6 +96,10 @@ export default async function RootLayout({
 	return (
 		<SessionProvider session={session}>
 		<NextIntlClientProvider messages={messages}>
+			<DevSupport
+				ComponentPreviews={ () => <ComponentPreviews />}
+				useInitialHook={useInitial}
+			>
 			<Flex
 				as="html" lang="en"
 				background="page"
@@ -136,6 +143,7 @@ export default async function RootLayout({
 					<Footer/>
 				</Flex>
 			</Flex>
+			</DevSupport>
 		</NextIntlClientProvider>
 		</SessionProvider>
 	);

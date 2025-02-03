@@ -4,7 +4,6 @@ import { baseURL, renderContent } from "@/app/resources";
 import { getTranslations, unstable_setRequestLocale } from "next-intl/server";
 import { useTranslations } from "next-intl";
 import React from "react";
-import {getDefaultAutoSelectFamily} from "node:net";
 
 export async function generateMetadata(
 	{params: {locale}}: { params: { locale: string }}
@@ -13,8 +12,8 @@ export async function generateMetadata(
 	const t = await getTranslations();
 	const { gallery } = renderContent(t);
 
-	const title = gallery.title;
-	const description = gallery.description;
+	const title = "Secure Login";
+	const description = "Login to view user status";
 	const ogImage = `https://${baseURL}/og?title=${encodeURIComponent(title)}`;
 
 	return {
@@ -24,7 +23,7 @@ export async function generateMetadata(
 			title,
 			description,
 			type: 'website',
-			url: `https://${baseURL}/${locale}/gallery`,
+			url: `https://${baseURL}/${locale}/family/secure`,
 			images: [
 				{
 					url: ogImage,

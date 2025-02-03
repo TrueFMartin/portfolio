@@ -34,8 +34,9 @@
 		"remark": "^15.0.1",
 		"remark-html": "^16.0.1",
 		"sass": "^1.77.6",
-		"sharp": "^0.33.4"
-	},
+		"sharp": "^0.33.4",
+      "@react-buddy/ide-toolbox-next": "^2.4.1"
+    },
 	"devDependencies": {
 		"@csstools/postcss-global-data": "^2.1.1",
 		"@types/cookie": "^0.6.0",
