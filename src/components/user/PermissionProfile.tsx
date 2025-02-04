@@ -2,7 +2,11 @@
 
 import prisma from "@/lib/prisma";
 import {auth} from "@/auth";
-import {Flex, Heading} from "@/once-ui/components";
+import {Flex, Grid, Heading, Icon, Text} from "@/once-ui/components";
+import RequestHistoryTable from "@/components/user/RequestHistoryTable";
+import {PermissionRequestType} from "@/app/utils/types";
+import {MakeRequestButton} from "@/components/user/MakeRequestButton";
+import React from "react";
 
 const unauth = <Flex>
     <h1>Not authenticated</h1>
@@ -23,42 +27,36 @@ export const PermissionProfile = async () => {
             email: email
         },
         select: {
+            permissionType: true,
             permissionRequests: {
+
+                orderBy: {
+                    updatedAt: 'desc'
+                },
                 select: {
-                    id: true,
-                    permission: true,
+                    createdAt: true,
+                    updatedAt: true,
+                    permissionType: true,
                     status: true,
                     note: true,
-                    permissionId: true,
-                }
+                    id: true,
+                },
             },
-            permissions: true,
         }
     })
     if (!perms) {
         return <Flex><h1>No permission requests or permissions</h1></Flex>
     }
     return (
-        <Flex>
+        <Flex direction={'column'} fillWidth={true} alignItems={'center'}>
             <Heading>Permissions</Heading>
-            <Flex>
-                <Heading>Permission Requests</Heading>
-                <Flex>
-                    {perms.permissionRequests.map((permReq) => {
-                        return <Flex key={permReq.id}>
-                            <Heading>{permReq.permission.name}</Heading>
-                            <Heading>{permReq.status}</Heading>
-                        </Flex>
-                    })}
-                </Flex>
-                <Heading>Active Permissions</Heading>
-                <Flex>
-                    {perms.permissions.map((perm) => {
-                        return <Flex key={perm.id}>
-                            <Heading>{perm.name}</Heading>
-                        </Flex>
-                    })}
-                </Flex>
+            <Flex direction={'row'} marginX={'xl'} gap={'m'} alignItems={'center'} padding={'m'} justifyContent={'center'}>
+                <Heading as={'h2'}>Active Permission: {perms.permissionType}</Heading>
+                <Flex><Icon name={'chevronRight'} size={'s'}/><Icon name={'chevronRight'} size={'s'}/></Flex>
+                <MakeRequestButton/>
+            </Flex>
+            <Flex direction={"row"} margin={'m'} gap={'m'}>
+                <RequestHistoryTable reqs={perms.permissionRequests as PermissionRequestType[]}/>
             </Flex>
         </Flex>
     );

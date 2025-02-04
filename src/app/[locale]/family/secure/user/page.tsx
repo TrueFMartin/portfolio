@@ -1,11 +1,10 @@
-import {Arrow, Avatar, Button, Flex, Grid, Heading, RevealFx, Text} from "@/once-ui/components";
+import {Flex, Heading} from "@/once-ui/components";
 import { baseURL, renderContent } from "@/app/resources";
 import { getTranslations, unstable_setRequestLocale } from "next-intl/server";
 import { useTranslations } from "next-intl";
 import React from "react";
 import {PermissionProfile} from "@/components/user/PermissionProfile";
 import {auth} from "@/auth";
-import {MakeRequestButton} from "@/components/user/MakeRequestButton";
 
 export async function generateMetadata(
 	{params: {locale}}: { params: { locale: string }}
@@ -81,20 +80,17 @@ export default function User(
             <Flex
 			alignItems={"center"}
 			justifyContent={"center"}
+			direction={"column"}
 			>
+				<Heading style={{borderStyle: 'solid'}} padding={'m'}>User Profile</Heading>
 				<Flex
 					fillWidth
 					direction="column"
 					paddingY="l" gap="m">
-					<Grid
-					columns={"repeat(2, 1fr)"}
-					>
-						<MakeRequestButton/>
+					<Flex>
 						<PermissionProfile/>
-					</Grid>
-
+					</Flex>
 				</Flex>
-
 			</Flex>
         </Flex>
     );

@@ -25,7 +25,7 @@ const DropdownWrapper = forwardRef<HTMLDivElement, DropdownWrapperProps>(({
     className,
     renderCustomDropdownContent,
 }, ref) => {
-    const [isDropdownOpen, setDropdownOpen] = useState(false);
+    const [isDropdownOpen, setDropdownOpen] = useState(true);
     const wrapperRef = useRef<HTMLDivElement>(null);
     const dropdownRef = useRef<HTMLDivElement | null>(null);
 

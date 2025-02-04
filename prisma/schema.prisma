@@ -48,13 +48,14 @@ enum PermissionRequestStatus {
 }
 
 model PermissionRequests {
-  id     String                  @id @default(cuid())
-  userId String
-  note   String?
-  status PermissionRequestStatus @default(PENDING)
-
-  permissionType PermissionType @default(NONE)
-  user           User           @relation(fields: [userId], references: [id])
+  id             String                  @id @default(cuid())
+  userId         String
+  note           String?
+  status         PermissionRequestStatus @default(PENDING)
+  createdAt      DateTime                @default(now())
+  updatedAt      DateTime                @updatedAt @default(now())
+  permissionType PermissionType          @default(NONE)
+  user           User                    @relation(fields: [userId], references: [id])
 }
 
 model Subscription {
@@ -119,7 +120,7 @@ model User {
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
-  permissionType     PermissionType @default(NONE)
+  permissionType     PermissionType       @default(NONE)
   permissionRequests PermissionRequests[]
   bookPositions      BookPosition[]
   subscriptions      Subscription[]

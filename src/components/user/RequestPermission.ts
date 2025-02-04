@@ -3,6 +3,7 @@
 import {auth} from "@/auth";
 import prisma from "@/lib/prisma";
 import {Prisma, PermissionType} from "@prisma/client";
+import {PermissionRequestType} from "@/app/utils/types";
 
 export async function requestPermission(
     permission: PermissionType,
@@ -32,7 +33,7 @@ export async function requestPermission(
             }
         }
     }
-    const newPermission = await prisma.permissionRequests.create(
+    const newPermission: PermissionRequestType = await prisma.permissionRequests.create(
         {
             data: perm
         }

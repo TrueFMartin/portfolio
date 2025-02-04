@@ -10,6 +10,7 @@ type TooltipProps = {
     prefixIcon?: string;
     suffixIcon?: string;
     className?: string;
+    style?: React.CSSProperties;
 };
 
 const Tooltip = forwardRef<HTMLDivElement, TooltipProps>(({
@@ -17,11 +18,12 @@ const Tooltip = forwardRef<HTMLDivElement, TooltipProps>(({
     prefixIcon,
     suffixIcon,
     className,
+    style,
 }, ref) => {
     return (
         <Flex
             ref={ref}
-            style={{ whiteSpace: 'nowrap', userSelect: 'none' }}
+            style={{ whiteSpace: 'nowrap', userSelect: 'none', ...style }}
             gap="4"
             zIndex={1}
             background="surface"
