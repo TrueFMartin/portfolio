@@ -1,5 +1,9 @@
 import {PermissionType} from "@prisma/client";
 
+export type ErrorType = ({
+    message: string
+} | undefined)
+
 export type PermissionRequestType = ({
     id: string,
     userId: string,

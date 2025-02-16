@@ -18,10 +18,15 @@ const routes = {
     // '/api/healthcheck': true,
 }
 
-// Enable password protection on selected routes
-// Set password in pages/api/authenticate.ts
+// Enable password/auth protection on selected routes
 const protectedRoutes = {
-    '/family/secure': true
+    '/family/secure': true,
+    '/family/secure/user': true,
+    '/family/secure/user/books': true
+}
+
+const roleRestrictedRoutes = {
+    '/family/secure/user/books': ['READ_SINGLE', 'READ_MANY', 'APPROVE_USERS']
 }
 
 const effects = {
@@ -74,4 +79,4 @@ const mailchimp = {
     }
 }
 
-export {routes, protectedRoutes, effects, style, display, mailchimp, baseURL, i18n, i18nOptions};
+export {routes, protectedRoutes, roleRestrictedRoutes, effects, style, display, mailchimp, baseURL, i18n, i18nOptions};

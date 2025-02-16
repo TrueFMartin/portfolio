@@ -4,7 +4,7 @@ import { getTranslations, unstable_setRequestLocale } from "next-intl/server";
 import { useTranslations } from "next-intl";
 import React from "react";
 import {PermissionProfile} from "@/components/user/PermissionProfile";
-import {auth} from "@/auth";
+import {auth} from "@/lib/auth";
 
 export async function generateMetadata(
 	{params: {locale}}: { params: { locale: string }}
@@ -44,7 +44,6 @@ export async function generateMetadata(
 export default function User(
 	{ params: {locale}}: { params: { locale: string }}
 ) {
-	const session = auth();
 	unstable_setRequestLocale(locale);
 	const t = useTranslations();
 	const { gallery, person } = renderContent(t);

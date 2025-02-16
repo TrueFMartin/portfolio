@@ -1,19 +1,23 @@
 "use client";
 
 import {PermissionRequestType} from "@/app/utils/types";
-import {Button, Flex, Grid, Heading, Text} from "@/once-ui/components";
-import {useState} from "react";
+import {Accordion, Badge, Button, Flex, Grid, Heading, IconButton, Text} from "@/once-ui/components";
+import React, {useState} from "react";
+import {useRouter} from "@/i18n/routing";
 
 type RequestHistoryTableProps = { reqs: PermissionRequestType[] };
 
 const RequestHistoryTable = ({reqs}: RequestHistoryTableProps) => {
-    const [isExpanded, setIsExpanded] = useState(false);
-
+    const route = useRouter();
+    const [isOpen, setIsOpen] = useState(false);
     return <Flex direction={"column"}>
-        <Heading as={'h2'}>Permission Request History</Heading>
-        <Button onClick={() => setIsExpanded(!isExpanded)}>{isExpanded ? 'Hide' : 'Show'} Request History</Button>
-        {/*@ts-ignore for maxHeight*/}
-        <Flex maxHeight={isExpanded? '': '1'} gap={'m'} paddingBottom={'m'} direction={'column'} borderStyle={'solid-1'} style={{visibility: isExpanded? 'visible': 'hidden'}}>
+        <IconButton onClick={() => {setIsOpen(false); route.refresh()}} icon={'refresh'} ></IconButton>
+        <Accordion open={isOpen} title={
+            <Flex><Badge gapOverride={"s"} paddingXOverride={"m"} icon={'bookOpenText'} title={'Request History'} />
+
+            </Flex>
+        }>
+        <Flex gap={'m'} paddingBottom={'m'} direction={'column'} borderStyle={'solid-1'}>
             <Grid style={{border: 'solid'}} gap={'m'} align={'center'} fillWidth={true}
                   paddingTop={'xs'} paddingBottom={'m'} paddingX={'m'} marginY={'xs'}
                   marginX={'s'} columns={'repeat(5, 1fr)'}>
@@ -24,7 +28,7 @@ const RequestHistoryTable = ({reqs}: RequestHistoryTableProps) => {
                 <Text>Note</Text>
             </Grid>
             {reqs.map((permReq) => {
-                return (permReq && <Grid style={{borderTop: 'solid'}} gap={'m'} align={'center'} fillWidth={true}
+                return (permReq && <Grid key={permReq.id} style={{borderTop: 'solid'}} gap={'m'} align={'center'} fillWidth={true}
                                          paddingTop={'xs'} paddingBottom={'m'} paddingX={'m'} marginY={'xs'}
                                          marginX={'s'} columns={'repeat(5, 1fr)'}>
                     <Text>{permReq.updatedAt.toUTCString()}</Text>
@@ -35,6 +39,7 @@ const RequestHistoryTable = ({reqs}: RequestHistoryTableProps) => {
                 </Grid>)
             })}
         </Flex>
+        </Accordion>
     </Flex>;
 }
 

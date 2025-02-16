@@ -14,8 +14,10 @@ import {getMessages, getTranslations, unstable_setRequestLocale} from 'next-intl
 import {routing} from "@/i18n/routing";
 import {renderContent} from "@/app/resources";
 import {Background, Flex} from "@/once-ui/components";
-import {SessionProvider} from "@/components/Proivder";
-import {auth} from "@/auth"
+import { auth } from "@/lib/auth";
+import {headers} from "next/headers";
+import {getRole} from "@/components/user/getRole";
+import {PermissionType} from "@prisma/client";
 
 export async function generateMetadata(
     {params: {locale}}: { params: { locale: string } }
@@ -90,9 +92,15 @@ export default async function RootLayout({
                                          }: RootLayoutProps) {
     unstable_setRequestLocale(locale);
     const messages = await getMessages();
-    const session = await auth();
+    let role: PermissionType = 'NONE';
+    let userId: string|undefined = undefined
+    const session = await auth.api.getSession({headers: headers()});
+    if (session && session.session && session.session.userId) {
+        userId = session.session.userId;
+        role = await getRole(session.user.id);
+    }
+
     return (
-        <SessionProvider session={session}>
             <NextIntlClientProvider messages={messages}>
                 <Flex
                     as="html" lang="en"
@@ -129,7 +137,7 @@ export default async function RootLayout({
                             <Flex
                                 justifyContent="center"
                                 fillWidth minHeight="0">
-                                <RouteGuard session={session}>
+                                <RouteGuard role={role} userId={userId}>
                                     {children}
                                 </RouteGuard>
                             </Flex>
@@ -138,6 +146,5 @@ export default async function RootLayout({
                     </Flex>
                 </Flex>
             </NextIntlClientProvider>
-        </SessionProvider>
     );
 }

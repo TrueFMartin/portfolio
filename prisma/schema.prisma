@@ -1,3 +1,4 @@
+
 generator client {
   provider = "prisma-client-js"
 }
@@ -7,6 +8,36 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
+enum BookRequestStatus {
+  PENDING
+  SUCCESSFUL
+  ERROR
+}
+
+model BookRequest {
+  id        String            @id @default(cuid())
+  userId    String
+  tocUrl    String
+  status    BookRequestStatus @default(PENDING)
+  note      String?
+  createdAt DateTime          @default(now())
+  updatedAt DateTime          @updatedAt
+
+  skipUntilChapter     String?
+
+  // Populated after success
+  firstChapterUrl   String?
+  firstChapterTitle String?
+  lastChapterUrl    String?
+  lastChapterTitle  String?
+
+  bookId String?
+  book   Book?   @relation(fields: [bookId], references: [id])
+  user   User    @relation(fields: [userId], references: [id])
+
+  @@unique([userId, tocUrl, skipUntilChapter, status])
+}
+
 model Book {
   id     String  @id @default(cuid())
   title  String
@@ -14,6 +45,7 @@ model Book {
   tocUrl String
 
   bookPositions BookPosition[]
+  BookRequest   BookRequest[]
 }
 
 model BookPosition {
@@ -109,13 +141,8 @@ enum PaymentStatus {
 }
 
 model User {
-  id            String    @id @default(cuid())
-  name          String?
-  email         String    @unique
-  emailVerified DateTime?
-  image         String?
-  accounts      Account[]
-  sessions      Session[]
+  id   String  @id @default(cuid())
+  name String?
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
@@ -125,43 +152,59 @@ model User {
   bookPositions      BookPosition[]
   subscriptions      Subscription[]
   payments           Payment[]
-}
 
-model Account {
-  userId            String
-  type              String
-  provider          String
-  providerAccountId String
-  refresh_token     String?
-  access_token      String?
-  expires_at        Int?
-  token_type        String?
-  scope             String?
-  id_token          String?
-  session_state     String?
+  BookRequest   BookRequest[]
+  email         String
+  emailVerified Boolean
+  image         String?
+  sessions      Session[]
+  accounts      Account[]
 
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
-
-  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
-
-  @@id([provider, providerAccountId])
+  @@unique([email])
+  @@map("user")
 }
 
 model Session {
-  sessionToken String   @unique
-  userId       String
-  expires      DateTime
-  user         User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  id        String   @id
+  expiresAt DateTime
+  token     String
+  createdAt DateTime
+  updatedAt DateTime
+  ipAddress String?
+  userAgent String?
+  userId    String
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
 
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
+  @@unique([token])
+  @@map("session")
 }
 
-model VerificationToken {
-  identifier String
-  token      String
-  expires    DateTime
+model Account {
+  id                    String    @id
+  accountId             String
+  providerId            String
+  userId                String
+  user                  User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  accessToken           String?
+  refreshToken          String?
+  idToken               String?
+  accessTokenExpiresAt  DateTime?
+  refreshTokenExpiresAt DateTime?
+  scope                 String?
+  password              String?
+  createdAt             DateTime
+  updatedAt             DateTime
 
-  @@id([identifier, token])
+  @@map("account")
+}
+
+model Verification {
+  id         String    @id
+  identifier String
+  value      String
+  expiresAt  DateTime
+  createdAt  DateTime?
+  updatedAt  DateTime?
+
+  @@map("verification")
 }

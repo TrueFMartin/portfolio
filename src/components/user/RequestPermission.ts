@@ -1,14 +1,15 @@
 "use server";
 
-import {auth} from "@/auth";
+import {auth} from "@/lib/auth";
 import prisma from "@/lib/prisma";
 import {Prisma, PermissionType} from "@prisma/client";
 import {PermissionRequestType} from "@/app/utils/types";
+import {headers} from "next/headers";
 
 export async function requestPermission(
     permission: PermissionType,
 )  {
-    const session = await auth();
+    const session = await auth.api.getSession({headers: headers()});
     if (!session) {
         return {message: "no auth session"}
     }
@@ -26,10 +27,7 @@ export async function requestPermission(
         status: "PENDING",
         user: {
             connect: {
-                email: email,
-                AND: {
-                    id: userId
-                },
+                id: userId
             }
         }
     }

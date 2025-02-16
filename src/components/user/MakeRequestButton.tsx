@@ -19,7 +19,7 @@ import {CollapseNumberRange} from "@formatjs/ecma402-abstract";
 
 export const MakeRequestButton = () => {
     const [response, setResponse] = useState('');
-    const [permissionType, setPermissionType] = useState<PermissionType | null>(null);
+    const [permissionType, setPermissionType] = useState<PermissionType>("NONE");
     const [alreadySubmitted, setAlreadySubmitted] = useState<PermissionType[]>([]);
     const [dialogOpen, setDialogOpen] = useState(false);
     const [loading, setLoading] = useState(false);
@@ -27,7 +27,7 @@ export const MakeRequestButton = () => {
     const [showToolTip, setShowToolTip] = useState(false);
     const submitRequest = async () => {
         setLoading(true);
-        if (!permissionType) {
+        if (!permissionType || permissionType === 'NONE') {
             return;
         }
         if (alreadySubmitted.includes(permissionType)) {
@@ -79,7 +79,7 @@ export const MakeRequestButton = () => {
                 secondaryButtonProps={{label: doneText, onClick: () => setDialogOpen(false)}}
             >
                 <Flex direction={'column'} padding={'s'}>
-                    <Dropdown selectedOption={Object.values(PermissionType).at(0)}
+                    <Dropdown selectedOption={permissionType}
                               options={Object.values(PermissionType).map((permissionType) => ({
                                   // Turn first char of each word to uppercase
                                   label: permissionType.toLowerCase().split('_').map((word) => word.charAt(0).toUpperCase() + word.slice(1)).join(' '),
