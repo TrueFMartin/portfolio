@@ -1,9 +1,10 @@
-import {Arrow, Avatar, Button, Flex, Grid, Heading, RevealFx, Text} from "@/once-ui/components";
-import MasonryGrid from "@/components/gallery/MasonryGrid";
+import {Flex, Heading} from "@/once-ui/components";
 import { baseURL, renderContent } from "@/app/resources";
 import { getTranslations, unstable_setRequestLocale } from "next-intl/server";
 import { useTranslations } from "next-intl";
 import React from "react";
+import {PermissionProfile} from "@/components/user/PermissionProfile";
+import {auth} from "@/lib/auth";
 
 export async function generateMetadata(
 	{params: {locale}}: { params: { locale: string }}
@@ -12,8 +13,8 @@ export async function generateMetadata(
 	const t = await getTranslations();
 	const { gallery } = renderContent(t);
 
-	const title = "Secure Login";
-	const description = "Login to view user status";
+	const title = "User Page";
+	const description = "User page to view user status";
 	const ogImage = `https://${baseURL}/og?title=${encodeURIComponent(title)}`;
 
 	return {
@@ -23,7 +24,7 @@ export async function generateMetadata(
 			title,
 			description,
 			type: 'website',
-			url: `https://${baseURL}/${locale}/family/secure`,
+			url: `https://${baseURL}/${locale}/family/secure/user`,
 			images: [
 				{
 					url: ogImage,
@@ -40,7 +41,7 @@ export async function generateMetadata(
 	};
 }
 
-export default function FamilySecure(
+export default function User(
 	{ params: {locale}}: { params: { locale: string }}
 ) {
 	unstable_setRequestLocale(locale);
@@ -78,24 +79,17 @@ export default function FamilySecure(
             <Flex
 			alignItems={"center"}
 			justifyContent={"center"}
+			direction={"column"}
 			>
+				<Heading style={{borderStyle: 'solid'}} padding={'m'}>User Profile</Heading>
 				<Flex
 					fillWidth
 					direction="column"
 					paddingY="l" gap="m">
-					<Grid
-					columns={"repeat(2, 1fr)"}
-					>
-						<Flex>
-							First Link
-						</Flex>
-						<Flex>
-							Second Link
-						</Flex>
-					</Grid>
-
+					<Flex>
+						<PermissionProfile/>
+					</Flex>
 				</Flex>
-
 			</Flex>
         </Flex>
     );

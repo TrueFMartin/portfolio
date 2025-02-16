@@ -5,6 +5,7 @@ import { Arrow, Flex, Icon, SmartLink, Text } from '.';
 
 import styles from './Badge.module.scss'
 import classNames from 'classnames';
+import {SpacingToken} from "@/once-ui/types";
 
 interface BadgeProps extends React.HTMLAttributes<HTMLDivElement> {
     title?: string;
@@ -15,6 +16,8 @@ interface BadgeProps extends React.HTMLAttributes<HTMLDivElement> {
     style?: React.CSSProperties;
     className?: string;
     effect?: boolean;
+    paddingXOverride?: SpacingToken;
+    gapOverride?: SpacingToken;
 }
 
 const Badge = forwardRef<HTMLDivElement | HTMLAnchorElement, BadgeProps>(({
@@ -26,6 +29,8 @@ const Badge = forwardRef<HTMLDivElement | HTMLAnchorElement, BadgeProps>(({
     effect = true,
     style,
     className,
+    paddingXOverride,
+    gapOverride,
     ...props
 }, ref) => {
     const commonProps = {
@@ -34,7 +39,9 @@ const Badge = forwardRef<HTMLDivElement | HTMLAnchorElement, BadgeProps>(({
         children: (
             <Flex
                 id="badge"
-                paddingX="20" paddingY="12"
+                paddingX={(paddingXOverride? paddingXOverride : "20")}
+                paddingY="12"
+                gap={(gapOverride? gapOverride : "xs")}
                 className={classNames(styles.badge, effect && styles.animation)}
                 alignItems="center"
                 radius="full" background="neutral-weak" shadow="l">

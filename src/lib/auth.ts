@@ -1,0 +1,25 @@
+import { betterAuth } from "better-auth";
+import { prismaAdapter } from "better-auth/adapters/prisma";
+import { PrismaClient } from "@prisma/client";
+
+const prisma = new PrismaClient();
+export const auth = betterAuth({
+    database: prismaAdapter(prisma, {
+        provider: "cockroachdb",
+    }),
+    session: {
+        cookieCache: {
+            enabled: true,
+            maxAge: 5 * 60 // Cache duration in seconds
+        }
+    },
+    emailAndPassword: {
+        enabled: true
+    },
+    socialProviders: {
+        google: {
+            clientId: process.env.AUTH_GOOGLE_ID || "",
+            clientSecret: process.env?.AUTH_GOOGLE_SECRET || "",
+        }
+    },
+});

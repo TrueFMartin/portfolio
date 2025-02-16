@@ -1,0 +1,210 @@
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "cockroachdb"
+  url      = env("DATABASE_URL")
+}
+
+enum BookRequestStatus {
+  PENDING
+  SUCCESSFUL
+  ERROR
+}
+
+model BookRequest {
+  id        String            @id @default(cuid())
+  userId    String
+  tocUrl    String
+  status    BookRequestStatus @default(PENDING)
+  note      String?
+  createdAt DateTime          @default(now())
+  updatedAt DateTime          @updatedAt
+
+  skipUntilChapter     String?
+
+  // Populated after success
+  firstChapterUrl   String?
+  firstChapterTitle String?
+  lastChapterUrl    String?
+  lastChapterTitle  String?
+
+  bookId String?
+  book   Book?   @relation(fields: [bookId], references: [id])
+  user   User    @relation(fields: [userId], references: [id])
+
+  @@unique([userId, tocUrl, skipUntilChapter, status])
+}
+
+model Book {
+  id     String  @id @default(cuid())
+  title  String
+  author String?
+  tocUrl String
+
+  bookPositions BookPosition[]
+  BookRequest   BookRequest[]
+}
+
+model BookPosition {
+  id           String             @id @default(cuid())
+  status       BookPositionStatus @default(IN_PROGRESS)
+  book         Book               @relation(fields: [bookId], references: [id])
+  bookId       String
+  user         User               @relation(fields: [userId], references: [id])
+  userId       String
+  readUntilUrl String?
+  createdAt    DateTime           @default(now())
+  updatedAt    DateTime           @updatedAt
+}
+
+enum BookPositionStatus {
+  IN_PROGRESS
+  FINISHED
+  ERROR
+}
+
+enum PermissionType {
+  NONE
+  READ_SINGLE
+  READ_MANY
+  APPROVE_USERS
+}
+
+enum PermissionRequestStatus {
+  PENDING
+  APPROVED
+  DENIED
+}
+
+model PermissionRequests {
+  id             String                  @id @default(cuid())
+  userId         String
+  note           String?
+  status         PermissionRequestStatus @default(PENDING)
+  createdAt      DateTime                @default(now())
+  updatedAt      DateTime                @updatedAt @default(now())
+  permissionType PermissionType          @default(NONE)
+  user           User                    @relation(fields: [userId], references: [id])
+}
+
+model Subscription {
+  id        String             @id @default(cuid())
+  userId    String
+  status    SubscriptionStatus @default(ACTIVE)
+  plan      SubscriptionPlan   @default(INVALID)
+  startDate DateTime           @default(now())
+  endDate   DateTime
+  createdAt DateTime           @default(now())
+  updatedAt DateTime           @updatedAt
+
+  user User @relation(fields: [userId], references: [id])
+
+  Payment Payment[]
+}
+
+enum SubscriptionStatus {
+  ACTIVE
+  INACTIVE
+  CANCELED
+  EXPIRED
+}
+
+enum SubscriptionPlan {
+  INVALID // Set 0 value to be invalid, must select proper field
+  TRIAL
+  SINGLE
+  FULL
+}
+
+model Payment {
+  id             String        @id @default(cuid())
+  userId         String
+  subscriptionId String
+  amount         Float
+  currency       String        @default("USD")
+  status         PaymentStatus @default(PENDING)
+  paymentDate    DateTime      @default(now())
+  createdAt      DateTime      @default(now())
+  updatedAt      DateTime      @updatedAt
+
+  user         User         @relation(fields: [userId], references: [id])
+  subscription Subscription @relation(fields: [subscriptionId], references: [id])
+}
+
+enum PaymentStatus {
+  PENDING
+  COMPLETED
+  FAILED
+}
+
+model User {
+  id   String  @id @default(cuid())
+  name String?
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  permissionType     PermissionType       @default(NONE)
+  permissionRequests PermissionRequests[]
+  bookPositions      BookPosition[]
+  subscriptions      Subscription[]
+  payments           Payment[]
+
+  BookRequest   BookRequest[]
+  email         String
+  emailVerified Boolean
+  image         String?
+  sessions      Session[]
+  accounts      Account[]
+
+  @@unique([email])
+  @@map("user")
+}
+
+model Session {
+  id        String   @id
+  expiresAt DateTime
+  token     String
+  createdAt DateTime
+  updatedAt DateTime
+  ipAddress String?
+  userAgent String?
+  userId    String
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([token])
+  @@map("session")
+}
+
+model Account {
+  id                    String    @id
+  accountId             String
+  providerId            String
+  userId                String
+  user                  User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  accessToken           String?
+  refreshToken          String?
+  idToken               String?
+  accessTokenExpiresAt  DateTime?
+  refreshTokenExpiresAt DateTime?
+  scope                 String?
+  password              String?
+  createdAt             DateTime
+  updatedAt             DateTime
+
+  @@map("account")
+}
+
+model Verification {
+  id         String    @id
+  identifier String
+  value      String
+  expiresAt  DateTime
+  createdAt  DateTime?
+  updatedAt  DateTime?
+
+  @@map("verification")
+}

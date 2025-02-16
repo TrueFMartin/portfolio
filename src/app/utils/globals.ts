@@ -1,0 +1,1 @@
+export const EpubApiUrl = 'http://localhost:8080/run';

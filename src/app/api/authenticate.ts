@@ -1,6 +1,7 @@
 import { NextApiRequest, NextApiResponse } from 'next';
 import * as cookie from 'cookie';
 import jwt from 'jsonwebtoken';
+import prisma from "@/lib/prisma";
 
 export default function handler(req: NextApiRequest, res: NextApiResponse) {
     if (req.method === 'POST') {
@@ -8,7 +9,10 @@ export default function handler(req: NextApiRequest, res: NextApiResponse) {
         if (!correctPassword) {
             return res.status(500).json({ message: 'Internal Server Error' });
         }
-        const { password } = req.body;
+        const { password, username } = req.body;
+        if (!username || !password) {
+            return res.status(400).json({ error: "Username and password are required" });
+        }
         if (password === correctPassword) {
             // Generate a JWT on successful login
             const token = jwt.sign(
